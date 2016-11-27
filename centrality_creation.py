@@ -1,6 +1,7 @@
 from ways.graph import load_map_from_csv
 from ways import tools
 import random
+from ways.tools import dbopen
 
 @tools.timed
 def create_centrality_csv(paths_number: int):
@@ -17,7 +18,7 @@ def create_centrality_csv(paths_number: int):
     lines.sort(key=itemgetter(1), reverse=True)
 
     #write to file
-    with open('files/centrality.csv', 'w') as f:
+    with dbopen('centrality.csv', 'w') as f:
         for line in lines:
             f.write((','.join(map(str, line)) + '\n'))
 

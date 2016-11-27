@@ -1,6 +1,7 @@
 from ways.graph import load_map_from_csv
 from random import choice
 from uniform_cost_search import find_dataset_neighbour
+from ways.tools import dbopen
 
 
 def create_dataset():
@@ -23,7 +24,7 @@ def create_dataset():
 def create_dataset_csv():
     dataset = create_dataset()
 
-    with open('files/dataSet.csv', 'w') as f:
+    with dbopen('dataSet.csv', 'w') as f:
         for i, j in dataset:
             f.write('{},{}'.format(i, j) + '\n')
 

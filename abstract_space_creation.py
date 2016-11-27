@@ -1,8 +1,7 @@
 from ways.graph import load_map_from_csv
 import pickle
 from uniform_cost_search import make_abstract_junction
-from ways.tools import timed
-from numpy import floor
+from ways.tools import timed, dbopen
 
 @timed
 def make_abstract_space(k, m, roads_junctions):
@@ -10,11 +9,11 @@ def make_abstract_space(k, m, roads_junctions):
     amount_of_neighbours = int(amount_of_centers * m)
     import csv
     from itertools import islice
-    with open('files/centrality.csv', 'r') as f:
+    with dbopen('centrality.csv', 'r') as f:
         it = islice(f, 0, amount_of_centers)
         centers = {int(row[0]) for row in csv.reader(it)}
 
-    with open('files/abstractSpace_{}.pkl'.format(k), 'wb') as f:
+    with dbopen('abstractSpace_{}.pkl'.format(k), 'wb') as f:
         abstract_space = {source: make_abstract_junction(source, roads_junctions, centers, amount_of_neighbours)
                           for source in centers}
         pickle.dump(abstract_space, f)
