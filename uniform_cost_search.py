@@ -93,16 +93,16 @@ def _uniform_cost_search_aux(source, roads_junctions, result_function, result_it
 
 def uniform_cost_search(source, target, cost_function, roads_junctions):
     def result_item(next):
-        return _path(next)
+        return _path(next), next.cost
 
     def goal_test(next, centers, source, target):
         return next.state == target
 
     def result_function(source, result_list, roads_junctions, close):
         if len(result_list) > 0:
-            return (result_list[0], len(close))
+            return result_list[0][0], len(close), result_list[0][1]
         else:
-            return None, len(close)
+            return None, len(close), None
 
     return _uniform_cost_search_aux(
         source, roads_junctions, result_function, result_item, cost_function, goal_test, target=target
@@ -130,10 +130,9 @@ def make_abstract_junction(source, roads_junctions, centers, solution_limit):
     )
 
 
-#TODO change result_item to return only next.state
 def find_dataset_neighbour(source, roads_junctions):
     def result_item(next):
-        return next.state, _path(next)
+        return next.state
 
     def goal_test(next, centers, source, target):
         return next.cost >= 200

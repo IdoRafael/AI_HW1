@@ -16,8 +16,7 @@ def create_dataset():
         result = find_dataset_neighbour(current, roads_junctions)
         if result is None:
             continue
-        dataset.add((current, result[0]))
-
+        dataset.add((current, result))
     return dataset
 
 
@@ -25,8 +24,8 @@ def create_dataset_csv():
     dataset = create_dataset()
 
     with open('files/dataSet.csv', 'w') as f:
-        for i,j in dataset:
-            f.write('{},{}'.format(i,j) + '\n')
+        for i, j in dataset:
+            f.write('{},{}'.format(i, j) + '\n')
 
 
 if __name__ == '__main__':

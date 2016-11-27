@@ -7,10 +7,16 @@ We just parse input and call methods from other modules.
 #do NOT import ways. This should be done from other files
 #simply import your modules and call the appropriate functions
 
+import algorithms
+
 
 def base(source, target):
     'call function to find path using uniform cost, and return list of indices'
-    raise NotImplementedError
+
+    # Using base Uniform Cost Search algorithm:
+    #   Returns lowest cost (distance) path between source and target.
+    #   If not found returns None
+    return algorithms.base_with_information(source, target)[0]
 
     
 def betterWaze(source, target,abstractMap=None):
@@ -20,7 +26,11 @@ def betterWaze(source, target,abstractMap=None):
         # Note: pickle might give you an error for the namedtuples, even if they
         # are imported indirectly from ways.graph. You might need to declare, for
         # example: Link = ways.graph.Link
-    raise NotImplementedError
+
+    # Using our betterWaze algorithm:
+    #   Return lowest cost (distance) path between source and target.
+    #   If not found returns None
+    return algorithms.better_waze_with_information(source, target, abstractMap)[0]
     
 
 def dispatch(argv):
