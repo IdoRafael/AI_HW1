@@ -3,14 +3,6 @@ from uniform_cost_search import uniform_cost_search, find_nearest_center, unifor
 from math import hypot
 
 
-def base_with_information(source, target):
-    roads_junctions = load_map_from_csv().junctions()
-
-    # returns (path, number_closed, cost).
-    # if no path found, returns (None, number_closed, None)
-    return uniform_cost_search(source, target, lambda link: link.distance, roads_junctions)
-
-
 def find_nearest_center_by_air(target, roads_junctions, centers):
     target_junction = roads_junctions[target]
     centers_with_distance = {(junc,
@@ -24,30 +16,46 @@ def find_nearest_center_by_air(target, roads_junctions, centers):
     return junc2
 
 
-def better_waze_with_information(source, target, abstractMap):
+def base_with_information_and_already_loaded(source, target, roads_junctions):
+    # returns (path, number_closed, cost).
+    # if no path found, returns (None, number_closed, None)
+    return uniform_cost_search(source, target, lambda link: link.distance, roads_junctions)
+
+
+def base_with_information(source, target):
     roads_junctions = load_map_from_csv().junctions()
+    return base_with_information_and_already_loaded(source, target, roads_junctions)
+
+
+def bw_with_information_and_already_loaded(source, target, abstractMap, roads_junctions):
     centers = {key for key, value in abstractMap.items()}
     closed_a, closed_b, closed_c = 0, 0, 0
 
     junc1, path_a, closed_a, cost_a = find_nearest_center(source, centers, roads_junctions)
     if junc1 is not None:
-        #b:
+        # b:
         junc2 = find_nearest_center_by_air(target, roads_junctions, centers)
         if junc2 is not None:
             path_b, closed_b, cost_b = uniform_cost_search(
                 junc2, target, lambda link: link.distance, roads_junctions)
-            #c:
+            # c:
             if path_b is not None:
                 path_c, closed_c, cost_c = uniform_cost_search_abstract(
                     junc1, junc2, abstractMap)
-                #d:
+                # d:
                 if path_c is not None:
-                    return path_a + path_c[1:] + path_b[1:],\
-                           closed_a + closed_b + closed_c,\
+                    return path_a + path_c[1:] + path_b[1:], \
+                           closed_a + closed_b + closed_c, \
                            cost_a + cost_b + cost_c
 
-    #e: if something failed:
+    # e: if something failed:
     path, closed, cost = uniform_cost_search(
         source, target, lambda link: link.distance, roads_junctions)
     previous_closed = {closed_a, closed_b, closed_c}
     return path, closed + sum(i for i in previous_closed if i is not None), cost
+
+
+def better_waze_with_information(source, target, abstractMap):
+    roads_junctions = load_map_from_csv().junctions()
+    return bw_with_information_and_already_loaded(source, target, abstractMap, roads_junctions)
+
