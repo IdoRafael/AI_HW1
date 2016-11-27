@@ -6,8 +6,8 @@ from numpy import floor
 
 @timed
 def make_abstract_space(k, m, roads_junctions):
-    amount_of_centers = int(floor(len(roads_junctions) * k))
-    amount_of_neighbours = int(floor(amount_of_centers * m))
+    amount_of_centers = int(len(roads_junctions) * k)
+    amount_of_neighbours = int(amount_of_centers * m)
     import csv
     from itertools import islice
     with open('files/centrality.csv', 'r') as f:

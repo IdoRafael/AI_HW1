@@ -65,7 +65,6 @@ def _uniform_cost_search_aux(source, roads_junctions, result_function, result_it
     while open_heapq:
         next = heappop(open_heapq)
         open_set.discard(next.state)
-
         close.add(next.state)
 
         if goal_test(next, centers, source, target):
@@ -79,7 +78,6 @@ def _uniform_cost_search_aux(source, roads_junctions, result_function, result_it
             if link.target not in close:
                 new_cost = next.cost + cost_function(link)
                 if link.target in open_set:
-                    open_set.discard(link.target)
                     old_node_index = open_heapq.index(Node(link.target, None, None))
                     old_node = open_heapq[old_node_index]
                     if old_node.cost > new_cost:
@@ -119,7 +117,7 @@ def make_abstract_junction(source, roads_junctions, centers, solution_limit):
     def result_function(source, result_list, roads_junctions, close):
         return Junction(
             index=source, lat=roads_junctions[source].lat, lon=roads_junctions[source].lon, links=result_list
-        ), len(close)
+        )
 
     def cost_function(link):
         return link.distance
