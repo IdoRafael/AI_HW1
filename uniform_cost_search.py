@@ -4,10 +4,11 @@ from ways.tools import timed
 
 
 class Node:
-    def __init__(self, state, parent, cost):
+    def __init__(self, state, parent, cost, parent_link = None):
         self.state = state
         self.parent = parent
         self.cost = cost
+        self.parent_link = parent_link
 
     def __lt__(self, other):
         return self.cost < other.cost
@@ -30,6 +31,19 @@ def _path(node: Node):
     while current is not None:
         path.insert(0, current.state)
         current = current.parent
+    return path
+
+
+def _abstract_path(node: None):
+    path = node.parent_link if node.parent_link is not None else []
+    current = node.parent
+    while current is not None:
+        if current.parent_link is not None:
+            path = current.parent_link + path[1:]
+            current = current.parent
+        else:
+            break
+
     return path
 
 
@@ -82,9 +96,11 @@ def _uniform_cost_search_aux(source, roads_junctions, result_function, result_it
                     old_node = open_heapq[old_node_index]
                     if old_node.cost > new_cost:
                         old_node.parent = next
+                        old_node.parent_link = link.path if type(link) is AbstractLink else None
                         _decrease_key(open_heapq, old_node_index, new_cost)
                 else:
-                    heappush(open_heapq, Node(link.target, next, new_cost))
+                    heappush(open_heapq, Node(link.target, next, new_cost,
+                                              link.path if type(link) is AbstractLink else None))
                     open_set.add(link.target)
     return result_function(source, result_list, roads_junctions, close)
 
@@ -146,4 +162,47 @@ def find_dataset_neighbour(source, roads_junctions):
 
     return _uniform_cost_search_aux(
         source, roads_junctions, result_function, result_item, cost_function, goal_test
+    )
+
+
+def find_nearest_center(source, centers, roads_junctions):
+    def result_item(next):
+        return next.state, _path(next), next.cost
+
+    def goal_test(next, centers, source, target):
+        return next.state in centers
+
+    def result_function(source, result_list, roads_junctions, close):
+        if len(result_list) > 0:
+            return result_list[0][0], result_list[0][1], len(close), result_list[0][2]
+        else:
+            return None, None, len(close), None
+
+    def cost_function(link):
+        return link.distance
+
+    return _uniform_cost_search_aux(
+        source, roads_junctions, result_function, result_item,
+        cost_function, goal_test, centers=centers
+    )
+
+
+def uniform_cost_search_abstract(source, target, abstract_map):
+    def result_item(next):
+        return _abstract_path(next), next.cost
+
+    def goal_test(next, centers, source, target):
+        return next.state == target
+
+    def result_function(source, result_list, roads_junctions, close):
+        if len(result_list) > 0:
+            return result_list[0][0], len(close), result_list[0][1]
+        else:
+            return None, len(close), None
+
+    def cost_function(link):
+        return link.cost
+
+    return _uniform_cost_search_aux(
+        source, abstract_map, result_function, result_item, cost_function, goal_test, target=target
     )

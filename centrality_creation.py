@@ -41,7 +41,6 @@ def random_path(p, roads, lines):
             # if none exists finish
             break
 
+
 if __name__ == '__main__':
     create_centrality_csv(500000)
-
-
