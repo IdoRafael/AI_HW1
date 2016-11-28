@@ -37,7 +37,7 @@ def create_experiment_csv():
             num_closed, cost = bw_experiment(i, j, abstract_map, roads_junctions)
             line[i, j] += [num_closed, cost]
 
-    with dbopen('experiment.csv', 'wt'):
+    with dbopen('experiment.csv', 'wt') as f:
         for i, j in dataset:
             f.write((','.join(map(str, line[i, j])) + '\n'))
 
