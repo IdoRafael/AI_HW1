@@ -1,13 +1,12 @@
 from ways.graph import load_map_from_csv
 from uniform_cost_search import uniform_cost_search, find_nearest_center, uniform_cost_search_abstract
-from math import hypot
-
+from ways.tools import compute_distance
 
 def find_nearest_center_by_air(target, roads_junctions, centers):
     target_junction = roads_junctions[target]
     centers_with_distance = {(junc,
-                              hypot(roads_junctions[junc].lat - target_junction.lat,
-                                    roads_junctions[junc].lon - target_junction.lon))
+                              compute_distance(roads_junctions[junc].lat, roads_junctions[junc].lon,
+                                               target_junction.lat, target_junction.lon))
                              for junc in centers if junc != target}
     try:
         junc2, distance = min(centers_with_distance, key=lambda t: t[1])
