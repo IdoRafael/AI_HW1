@@ -1,6 +1,5 @@
 from heapq import heappop, heappush
 from ways.graph import load_map_from_csv, Junction, Link, AbstractLink
-from ways.tools import timed
 
 
 class Node:
